@@ -4,4 +4,9 @@
 # Examples:
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+#   Character.create(name: 'Luke', movie: movie;s.first)
+Todo.create(description: "call mom", completed: true)
+Todo.create(description: "feed kitten", completed: true)
+Todo.create(description: "wash dishes", completed: true)
+Todo.create(description: "make dinner", completed: false)
+Todo.create(description: "bathe kitten", completed: false)
