@@ -86,7 +86,7 @@ function removeTodo(){ // makes delete req. to backend + removes the given todo'
 
 function createTodo(){
     event.preventDefault()
-
+    main.innerHTML = ""
     const todo = { 
         description: document.getElementById("description").value,
         completed: document.getElementById("completed").value
