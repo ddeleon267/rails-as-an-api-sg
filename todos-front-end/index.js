@@ -1,3 +1,5 @@
+// NEW COPY
+
 // ********* global constants so I don't have to repeat myself ************
 
 const BASE_URL = 'http://localhost:3000'
@@ -103,6 +105,7 @@ function createTodo(){
     .then(response => response.json())
     .then(todo => {
         main.innerHTML += makeTodoListItem(todo)
+        attachClicksToLinks()
         todoFormDiv.innerHTML = ""
     })
 }
@@ -111,6 +114,7 @@ function displayTodo(){
     event.preventDefault()
     const id = event.target.dataset.id
     main.innerHTML = ''
+    todoFormDiv.innerHTML = ''
 
     fetch(BASE_URL + '/todos/' + id)
     .then(response => response.json())
@@ -135,6 +139,7 @@ function getTodos(){
 // ********* Helpers for generating HTML and adding event listeners ********* //
 
 function displayForm(){
+    todoFormDiv.innerHTML = ""
     const html = makeTodoForm()
     todoFormDiv.innerHTML += html
     document.querySelector("form").addEventListener('submit', createTodo)
