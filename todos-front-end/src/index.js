@@ -1,4 +1,3 @@
-// NEW COPY
 
 // ********* global constants so I don't have to repeat myself ************
 
@@ -9,7 +8,8 @@ const todoFormDiv = document.getElementById("todo-form")
 // ********* startup routine => make fetch to get initial data *********** //
 
 document.addEventListener("DOMContentLoaded", () =>{ 
-    getTodos()
+    attachClicksToLinks()
+
 })
 
 // ************************* requests to backend ************************ //
@@ -35,11 +35,10 @@ function updateTodo() {  // processes submission of edit form (makes patch req. 
     fetch(BASE_URL + `/todos/${id}`, configObj)
         .then(response => response.json())
         .then(todo => { // using the updated todo that is returned to update the html for that todo on the page
-            const todoLinks = `<a href="" data-id="${todo.id}">${todo.description}</a> - ${todo.completed ? "Completed" : "Not Completed"}
-                <button id="delete" data-id="${todo.id}">Delete</button>
-                <button id="update-todo" data-id="${todo.id}">Edit</button>`
+            const td = new Td(todo)
 
-            document.querySelector(`li a[data-id="${id}"]`).parentElement.innerHTML = todoLinks
+            document.querySelector(`li a[data-id="${id}"]`).parentElement.innerHTML = td.renderTodo()
+            td.renderULs()
             attachClicksToLinks() // since I replaced the html I need to reattach the event listeners
             todoFormDiv.innerHTML = ""
         })
@@ -86,7 +85,7 @@ function removeTodo(){ // makes delete req. to backend + removes the given todo'
 
 function createTodo(){
     event.preventDefault()
-    main.innerHTML = ""
+    clearUL()
     const todo = { 
         description: document.getElementById("description").value,
         completed: document.getElementById("completed").value
@@ -104,7 +103,8 @@ function createTodo(){
     fetch(BASE_URL + '/todos', configObj)
     .then(response => response.json())
     .then(todo => {
-        main.innerHTML += makeTodoListItem(todo)
+        const td = new Td(todo)
+        main.querySelector("ul").innerHTML += td.renderTodo()
         attachClicksToLinks()
         todoFormDiv.innerHTML = ""
     })
@@ -113,24 +113,30 @@ function createTodo(){
 function displayTodo(){
     event.preventDefault()
     const id = event.target.dataset.id
-    main.innerHTML = ''
+    clearUL()
     todoFormDiv.innerHTML = ''
 
     fetch(BASE_URL + '/todos/' + id)
     .then(response => response.json())
     .then(todo => {
-        main.innerHTML += makeTodoElement(todo)
+        const td = new Td(todo)
+        main.querySelector("ul").innerHTML += td.renderTodo()
+        td.renderULs()
     })
 }
 
 
 function getTodos(){
     todoFormDiv.innerHTML = ''
-    main.innerHTML = ""
+    clearUL()
     fetch(BASE_URL + '/todos')
     .then(response => response.json())
     .then(todos => {
-        main.innerHTML += todos.map((todo) => makeTodoListItem(todo)).join("")
+        todos.forEach(todo => {
+            const td = new Td(todo)
+            main.querySelector("ul").innerHTML += td.renderTodo()
+            td.renderULs()
+        })
         attachClicksToLinks()
     })
 
@@ -138,7 +144,15 @@ function getTodos(){
 
 // ********* Helpers for generating HTML and adding event listeners ********* //
 
+
+function clearUL(){
+    const todosUL = document.querySelector("#main ul")
+    todosUL.innerHTML = ""
+
+}
+
 function displayForm(){
+    clearUL()
     todoFormDiv.innerHTML = ""
     const html = makeTodoForm()
     todoFormDiv.innerHTML += html
@@ -179,11 +193,4 @@ function attachClicksToLinks(){
 
 }
 
-function makeTodoListItem(todo){
-    return (`<li>
-                <a href="" data-id="${todo.id}">${todo.description}</a> - ${todo.completed ? "Completed" : "Not Completed"}
-                <button id="delete" data-id="${todo.id}">Delete</button>
-                <button id="update-todo" data-id="${todo.id}">Edit</button>
-            </li>`
-            )
-}
+
